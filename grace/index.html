@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You Card</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8ede5;
+            font-family: Arial, sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        .thank-you-animation {
+            position: absolute;
+            top: 10%;
+            font-size: 48px;
+            font-weight: bold;
+            color: #eb7d6d;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+            margin-right: 50px;
+        }
+        .flipped + .thank-you-animation {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #eb7d6d;
+            opacity: 0;
+            animation: fall 2s linear forwards;
+        }
+        @keyframes fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        .card-container {
+            position: relative;
+            width: 600px;
+            height: 400px;
+            perspective: 1200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .card {
+            width: 100%;
+            height: 100%;
+            position: absolute; /* Ensure it stays in place */
+            transform-style: preserve-3d;
+            transform-origin: center; /* Flips around its own center */
+            transition: transform 0.8s ease-in-out;
+        }
+        .flipped {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .card-front {
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            position: absolute;
+            border: 5px solid #eb7d6d;
+            overflow: hidden;
+        }
+        .envelope {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            background: white;
+            clip-path: polygon(10% 25%, 50% 0%, 90% 25%, 90% 85%, 10% 85%);
+            border-bottom: 5px solid #eb7d6d;
+        }
+        .envelope-flap {
+            position: absolute;
+            width: 100%;
+            height: 50%;
+            background: #eb7d6d;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            top: 0;
+        }
+        .envelope-seal {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background-image: url('yncn-patch.png');
+            background-size: cover;
+            background-position: center;
+            border-radius: 50%;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 80px;
+        }
+        .card-back {
+            background-color: #F8CD6B;
+            transform: rotateY(180deg);
+            position: absolute;
+            top: 0;
+            left: 0;
+            flex-direction: column;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            overflow: hidden;
+        }
+        .message-container {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+            flex-direction: column;
+        }
+        .message {
+            font-size: 18px;
+            color: #333;
+            white-space: pre-line;
+        }
+        .photo {
+            width: 300px;
+            height: 300px;
+            background-image: url('yncn.jpg');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            margin-top: 15px;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+            border: 5px solid white;
+            transform: translateX(47%);
+        }
+        .photo::before, .photo::after {
+            content: "";
+            position: absolute;
+            width: 40px;
+            height: 10px;
+            background-color: #eb7d6d;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-5deg);
+        }
+        .photo::after {
+            top: auto;
+            bottom: -5px;
+            transform: translateX(-50%) rotate(5deg);
+        }
+        .flip-gif {
+            position: absolute;
+            width: 100px; /* Adjust size */
+            height: 100px;
+            background-size: cover;
+            background-repeat: no-repeat;
+            opacity: 0; /* Initially hidden */
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .flip-left {
+            left: -120px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-image: url('dancing-parrot.gif'); /* Replace with actual GIF URL */
+        }
+
+        .flip-right {
+            right: -160px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-image: url('dancing-parrot.gif'); /* Replace with actual GIF URL */
+        }
+        .scroll-down {
+            position: absolute;
+            top: 380px;
+            bottom: 20px;
+            left: 80%;
+            transform: translateX(-50%);
+            font-size: 20px;
+            color: #eb7d6d;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            animation: bounce 1.5s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            50% {
+                transform: translateX(-50%) translateY(10px);
+            }
+        }
+
+        .card.flipped + .scroll-down {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="thank-you-animation" id="thankYouText">THANK YOU!</div>
+    <div class="card-container" onclick="flipCard()">
+        <div class="card" id="thankYouCard">
+            <div class="flip-gif flip-left"></div>
+            <div class="flip-gif flip-right"></div>
+            <div class="card-front">
+                <div class="envelope"></div>
+                <div class="envelope-flap"></div>
+                <div class="envelope-seal"></div>
+            </div>
+            <div class="card-back">
+                <div id="message-box" class="message-container">
+                    <div class="message">
+                        Hi Grace!
+
+                        From the bottom of my heart, thank you so much for your hard work this past year! All the positive feedback for the events are obviously a testament to your guys’ vision, dedication and great leadership. I’m really proud of you and Taleen, and I hope you guys are proud of yourselves too! I really admire your hype energy and positivity you bring to the club, and also life in general, everyday. Keep that up! I wish you all the best on BD next year and your PEY! Can’t wait to come back to see what you all are up to! Cheers, and stay golden buddy :)
+
+                        Jay
+
+                        //
+                        Dear Grace,
+
+                        Thank you so much for your dedication and hard work this past year on YNCN. I am so proud of everything you accomplished this year. You absolutely killed Ops and were such an asset on the team. You are a team player and bring amazing energy to every team you’re on. I can’t wait to see you on Survivor. Here for you always and excited for your next adventures!
+
+                        Dina
+                    </div>
+                    <div class="photo"></div>
+                </div>
+                <div class="scroll-down" id="scrollIndicator">Scroll down ↓</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function flipCard() {
+            let card = document.getElementById('thankYouCard');
+            let text = document.getElementById('thankYouText');
+            let gifs = document.querySelectorAll('.flip-gif');
+            let scrollIndicator = document.getElementById('scrollIndicator');
+
+            card.classList.toggle('flipped');
+
+            if (card.classList.contains('flipped')) {
+                text.style.opacity = '1';
+                text.style.transform = 'scale(1)';
+                generateConfetti();
+
+                setTimeout(() => {
+                    gifs.forEach(gif => gif.style.opacity = '1');
+                    scrollIndicator.style.opacity = '1';
+                    scrollIndicator.style.animation = 'bounce 1.5s infinite';
+                }, 1000);
+
+                // Add event listener to detect scrolling
+                document.getElementById("message-box").addEventListener('scroll', hideScrollIndicator);
+            } else {
+                text.style.opacity = '0';
+                text.style.transform = 'scale(0.5)';
+                gifs.forEach(gif => gif.style.opacity = '0');
+                scrollIndicator.style.opacity = '0';
+
+                // Remove scroll event listener when flipped back
+                document.getElementById("message-box").removeEventListener('scroll', hideScrollIndicator);
+            }
+        }
+
+        // Function to hide scroll indicator when user scrolls
+        function hideScrollIndicator() {
+            let scrollIndicator = document.getElementById('scrollIndicator');
+            scrollIndicator.style.opacity = '0';
+            scrollIndicator.style.animation = 'none'; // Stop bouncing
+            document.getElementById("message-box").removeEventListener('scroll', hideScrollIndicator); // Remove listener after first scroll
+        }
+        function generateConfetti() {
+            let colors = ['#51AFB5', '#eb7d6d', '#6dc28d', '#F8CD6B'];
+            for (let i = 0; i < 50; i++) {
+                let confetti = document.createElement("div");
+                confetti.className = "confetti";
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = Math.random() * 100 + "vw";
+                confetti.style.animationDuration = Math.random() * 2 + 1 + "s";
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 2000);
+            }
+        }
+    </script>
+</body>
+</html>
